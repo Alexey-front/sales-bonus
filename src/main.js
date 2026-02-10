@@ -7,7 +7,10 @@
 function calculateSimpleRevenue(purchase, _product) {
    // @TODO: Расчет выручки от операции
    const { discount, sale_price, quantity } = purchase;
-   const discountCalc = 1 - (discount / 100);
+   if (discount === 0) {
+    return sale_price * quantity;
+   }
+   const discountCalc = 1 - discount / 100;
    return sale_price * quantity * discountCalc;
 }
 
@@ -43,9 +46,12 @@ function calculateBonusByProfit(index, total, seller) {
  */
 function analyzeSalesData(data, options) {
     // @TODO: Проверка входных данных
+    if(!options || typeof options !== "object") {
+        throw new Error('Options должен быть объектом')
+    }
     if(!data 
-        || !Array.isArray(data.products) || !Array.isArray(data.sellers) || !Array.isArray(data.purchase_records) // проверка на тип данных(массив)
-        || data.products.length === 0 || data.sellers.length === 0 || data.purchase_records.length === 0) // проверка на заполненность данных
+        || !Array.isArray(data.products) || !Array.isArray(data.sellers) || !Array.isArray(data.purchase_records) || !Array.isArray(data.customers) // проверка на тип данных(массив)
+        || data.products.length === 0 || data.sellers.length === 0 || data.purchase_records.length === 0 || data.customers.length === 0) // проверка на заполненность данных
         {
             throw new Error('Некорректные входные данные');
         } 
@@ -91,9 +97,9 @@ function analyzeSalesData(data, options) {
             
              record.items.forEach(item => {
                 const product = productIndex[item.sku];
-                let cost = product.purchase_price * item.quantity;
-                let revenue = calculateRevenue(item); 
-                let profit = revenue - cost;
+                const cost = product.purchase_price * item.quantity;
+                const revenue = calculateRevenue(item); 
+                const profit = revenue - cost;
                 seller.profit += profit;
 
                  if(!seller.products_sold[item.sku]) {
