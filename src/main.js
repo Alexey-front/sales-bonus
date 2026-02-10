@@ -80,8 +80,6 @@ function analyzeSalesData(data, options) {
                               // циклом, искать там по id продавца, хотя не получится, нам ведь нужен чек, а не продукты.                        
         }))
 
-        console.log(sellerStats)
-
     // @TODO: Индексация продавцов и товаров для быстрого доступа
 
         const sellerIndex = Object.fromEntries(sellerStats.map(item => [item.id, item])) // Ключом будет id, значением — запись из sellerStats
